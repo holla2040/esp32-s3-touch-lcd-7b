@@ -1,0 +1,31 @@
+# Arduino build artifacts
+/tmp/arduino-build/
+*.bin
+*.elf
+*.map
+
+# Editor and IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Compiled Object files
+*.o
+*.obj
+*.a
+*.lib
+
+# Debug files
+*.log
+*.dSYM/
+
+# Claude temporary files
+.claude/
+
+# Backup files
+*.bak
+*.old
+*.orig
