@@ -85,14 +85,52 @@ Progressive hardware bring-up examples ("babysteps") for **Waveshare ESP32-S3 To
 
 ## Quick Start
 
-### Prerequisites
+### Installing Arduino CLI
+
+Arduino CLI is a command-line tool that compiles Arduino sketches without requiring the Arduino IDE.
+
+**Ubuntu/Debian**:
+```bash
+# Download and install latest version
+curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+
+# Add to PATH (add to ~/.bashrc for persistence)
+export PATH=$PATH:$HOME/bin
+```
+
+**macOS** (via Homebrew):
+```bash
+brew install arduino-cli
+```
+
+**Other platforms**: See [Arduino CLI installation guide](https://arduino.github.io/arduino-cli/latest/installation/)
+
+### Installing Required Libraries
+
+Once arduino-cli is installed, set up the build environment:
 
 ```bash
-# Install Arduino CLI
+# Update package index
+arduino-cli core update-index
+
+# Install ESP32 board support (includes Wire, Arduino.h, ESP-IDF components)
 arduino-cli core install esp32:esp32@2.0.11
 
-# Install LVGL library (for examples 08+)
+# Install LVGL library (required for examples 08-38)
 arduino-cli lib install "lvgl@^8.4.0"
+
+# Verify installation
+arduino-cli core list
+arduino-cli lib list
+```
+
+**Expected output**:
+```
+ID              Installed Latest Name
+esp32:esp32     2.0.11    ...    esp32
+
+Name  Installed Available Location Description
+lvgl  8.4.0     ...       user     LVGL (Light and Versatile Graphics Library)
 ```
 
 ### Build & Flash
