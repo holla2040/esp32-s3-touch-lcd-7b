@@ -2,6 +2,8 @@
 
 Progressive hardware bring-up examples ("babysteps") for **Waveshare ESP32-S3 Touch LCD 7.0B** development platform. Each example demonstrates minimal working code to get a specific hardware component functional.
 
+> **Note**: This code was developed using [Claude Code](https://claude.com/claude-code) version 2.
+
 ## Hardware
 
 **Board**: Waveshare ESP32-S3 Touch LCD 7.0B (ESP32 development platform)
@@ -59,6 +61,17 @@ Progressive hardware bring-up examples ("babysteps") for **Waveshare ESP32-S3 To
 38. **38_lvgl_tileview** - Swipeable tiled views
 
 **Widget Coverage**: 103% - All LVGL 8.4 core and extra widgets covered!
+
+## Dependencies
+
+### Required Software
+- **Arduino CLI** - Build tool for compilation
+- **ESP32 Board Support** - `esp32:esp32@2.0.11`
+- **LVGL Library** - `lvgl@^8.4.0` (for examples 08-38)
+
+### Optional Tools
+- **microcom** - Serial monitoring (for `make con`)
+- **esptool.py** - Firmware flashing (included with ESP32 board support)
 
 ## Quick Start
 
