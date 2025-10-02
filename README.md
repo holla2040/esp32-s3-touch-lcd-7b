@@ -2,7 +2,7 @@
 
 Progressive hardware bring-up examples ("babysteps") for **Waveshare ESP32-S3 Touch LCD 7.0B** development platform. Each example demonstrates minimal working code to get a specific hardware component functional.
 
-> **Note**: This code was developed using [Claude Code](https://docs.claude.com/en/docs/claude-code) version 2.
+> **Note**: This code was developed using [Claude Code](https://docs.claude.com/en/docs/claude-code) version 2 on Ubuntu 22.04 with arduino-cli (no Arduino IDE required).
 
 ## Hardware
 
@@ -65,9 +65,19 @@ Progressive hardware bring-up examples ("babysteps") for **Waveshare ESP32-S3 To
 ## Dependencies
 
 ### Required Software
-- **Arduino CLI** - Build tool for compilation
+- **Arduino CLI** - Build tool (no Arduino IDE needed)
 - **ESP32 Board Support** - `esp32:esp32@2.0.11`
-- **LVGL Library** - `lvgl@^8.4.0` (for examples 08-38)
+
+### Arduino Libraries
+
+**External Library** (requires installation):
+- **LVGL 8.4.0** - GUI library for examples 08-38
+
+**Built-in Libraries** (included with ESP32 board support, no installation needed):
+- `Wire.h` - Arduino I2C library (used in examples 06+)
+- `Arduino.h` - Arduino core library
+- ESP-IDF components: FreeRTOS, LCD drivers, timers, logging
+- Standard C libraries: stdio, string, stdint
 
 ### Optional Tools
 - **microcom** - Serial monitoring (for `make con`)
