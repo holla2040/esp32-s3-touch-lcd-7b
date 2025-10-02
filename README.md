@@ -2,7 +2,7 @@
 
 Progressive hardware bring-up examples ("babysteps") for **Waveshare ESP32-S3 Touch LCD 7.0B** development platform. Each example demonstrates minimal working code to get a specific hardware component functional.
 
-> **Note**: This code was developed using [Claude Code](https://claude.com/claude-code) version 2.
+> **Note**: This code was developed using [Claude Code](https://docs.claude.com/en/docs/claude-code) version 2.
 
 ## Hardware
 
