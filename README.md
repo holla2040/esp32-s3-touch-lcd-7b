@@ -65,7 +65,7 @@ Progressive hardware bring-up examples ("babysteps") for **Waveshare ESP32-S3 To
 ## Dependencies
 
 ### Required Software
-- **Arduino CLI** - Build tool (no Arduino IDE needed)
+- **Arduino CLI 1.3.1** - Build tool (no Arduino IDE needed)
 - **ESP32 Board Support** - `esp32:esp32@2.0.11`
 
 ### Arduino Libraries
