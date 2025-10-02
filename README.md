@@ -66,7 +66,7 @@ Progressive hardware bring-up examples ("babysteps") for **Waveshare ESP32-S3 To
 
 ### Required Software
 - **Arduino CLI 1.3.1** - Build tool (no Arduino IDE needed)
-- **ESP32 Board Support** - `esp32:esp32@2.0.11`
+- **ESP32 Board Support** - `esp32:esp32@3.3.0`
 
 ### Arduino Libraries
 
@@ -114,7 +114,7 @@ Once arduino-cli is installed, set up the build environment:
 arduino-cli core update-index
 
 # Install ESP32 board support (includes Wire, Arduino.h, ESP-IDF components)
-arduino-cli core install esp32:esp32@2.0.11
+arduino-cli core install esp32:esp32@3.3.0
 
 # Install LVGL library (required for examples 08-38)
 arduino-cli lib install "lvgl@^8.4.0"
@@ -127,7 +127,7 @@ arduino-cli lib list
 **Expected output**:
 ```
 ID              Installed Latest Name
-esp32:esp32     2.0.11    ...    esp32
+esp32:esp32     3.3.0     3.3.0  esp32
 
 Name  Installed Available Location Description
 lvgl  8.4.0     ...       user     LVGL (Light and Versatile Graphics Library)
