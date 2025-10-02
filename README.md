@@ -117,7 +117,7 @@ arduino-cli core update-index
 arduino-cli core install esp32:esp32@3.3.0
 
 # Install LVGL library (required for examples 08-38)
-arduino-cli lib install "lvgl@^8.4.0"
+arduino-cli lib install "lvgl@8.4.0"
 
 # Verify installation
 arduino-cli core list
