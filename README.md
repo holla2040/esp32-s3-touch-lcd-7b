@@ -1,10 +1,10 @@
 # ESP32-S3 Touch LCD 7B Examples
 
-Progressive hardware bring-up examples ("babysteps") for **Waveshare ESP32-S3 Touch LCD 7.0B**. Each example demonstrates minimal working code to get a specific hardware component functional.
+Progressive hardware bring-up examples ("babysteps") for **Waveshare ESP32-S3 Touch LCD 7.0B** development platform. Each example demonstrates minimal working code to get a specific hardware component functional.
 
 ## Hardware
 
-**Board**: Waveshare ESP32-S3 Touch LCD 7.0B
+**Board**: Waveshare ESP32-S3 Touch LCD 7.0B (ESP32 development platform)
 **MCU**: ESP32-S3-WROOM-1-N16R8 (16MB Flash, 8MB Octal PSRAM)
 **Display**: 1024×600 RGB LCD (16-bit parallel RGB565)
 **Touch**: GT911 capacitive touch controller (I2C, up to 5 points)
