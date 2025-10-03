@@ -129,11 +129,13 @@ void setup() {
         lv_obj_set_style_text_font(tab_btns, &lv_font_montserrat_26, 0);
         lv_obj_set_style_pad_column(tab_btns, 5, 0);  // 5px spacing between tabs
 
-        // Selected tab: white text on very dark blue background
+        // Selected tab: white text on very dark blue background, no border
         lv_obj_set_style_text_font(tab_btns, &lv_font_montserrat_26, LV_PART_ITEMS | LV_STATE_CHECKED);
         lv_obj_set_style_text_color(tab_btns, lv_color_white(), LV_PART_ITEMS | LV_STATE_CHECKED);
-        lv_obj_set_style_bg_color(tab_btns, lv_palette_darken(LV_PALETTE_BLUE, 4), LV_PART_ITEMS | LV_STATE_CHECKED);
+        lv_obj_set_style_bg_color(tab_btns, lv_color_hex(0x001a33), LV_PART_ITEMS | LV_STATE_CHECKED);  // Very dark blue
         lv_obj_set_style_bg_opa(tab_btns, LV_OPA_COVER, LV_PART_ITEMS | LV_STATE_CHECKED);
+        lv_obj_set_style_radius(tab_btns, 10, LV_PART_ITEMS | LV_STATE_CHECKED);  // Rounded top corners
+        lv_obj_set_style_border_width(tab_btns, 0, LV_PART_ITEMS | LV_STATE_CHECKED);  // No border
 
         // Unselected tabs: darker grey text with rounded border (top, left, right)
         lv_obj_set_style_text_color(tab_btns, lv_palette_darken(LV_PALETTE_GREY, 2), LV_PART_ITEMS);
@@ -141,6 +143,10 @@ void setup() {
         lv_obj_set_style_border_color(tab_btns, lv_palette_main(LV_PALETTE_GREY), LV_PART_ITEMS);
         lv_obj_set_style_border_side(tab_btns, LV_BORDER_SIDE_TOP | LV_BORDER_SIDE_LEFT | LV_BORDER_SIDE_RIGHT, LV_PART_ITEMS);
         lv_obj_set_style_radius(tab_btns, 10, LV_PART_ITEMS);
+
+        // Make tab content area overlap tab buttons to hide bottom rounded corners
+        lv_obj_t *tab_content = lv_tabview_get_content(tabview);
+        lv_obj_set_y(tab_content, lv_obj_get_y(tab_content) - 15);  // Pull content up to cover tab bottom
 
         // Populate each tab
         create_dashboard_tab(tab_dashboard);
