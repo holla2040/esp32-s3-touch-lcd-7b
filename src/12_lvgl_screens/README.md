@@ -4,7 +4,10 @@ LVGL tab view widget providing multi-screen navigation with three tabs: Dashboar
 
 ## What You'll See
 
-- **Tab buttons**: At top of screen - Dashboard, Settings, About
+- **Tab buttons**: At top of screen with enhanced styling - Dashboard, Settings, About
+  - Selected tab: white text on dark blue background with rounded corners
+  - Unselected tabs: grey text with rounded borders (top, left, right)
+  - 5px spacing between tabs for better visual separation
 - **Dashboard tab**: System status with colored labels (green, blue, orange)
 - **Settings tab**: Configuration options (brightness, volume, WiFi)
 - **About tab**: Device information (board, display, LVGL version)
@@ -26,19 +29,58 @@ make flash   # Upload to board
 ## Key Implementation Details
 
 ### Tab View Widget
-- **Creation**: `lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 60)`
+- **Creation**: `lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 80)`
 - **Direction**: Tabs at top (`LV_DIR_TOP`)
-- **Tab bar height**: 60 pixels
+- **Tab bar height**: 80 pixels (increased for better touch targets)
 - **Tab count**: 3 tabs
+- **Screen padding**: 5px from all edges for refined appearance
 
 ### Adding Tabs
 ```cpp
-lv_obj_t *tabview = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 60);
+lv_obj_t *tabview = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 80);
+
+// Add 5px padding from screen edges
+lv_obj_set_style_pad_all(tabview, 5, 0);
 
 // Add tabs and get their content objects
 lv_obj_t *tab_dashboard = lv_tabview_add_tab(tabview, "Dashboard");
 lv_obj_t *tab_settings = lv_tabview_add_tab(tabview, "Settings");
 lv_obj_t *tab_about = lv_tabview_add_tab(tabview, "About");
+```
+
+### Tab Styling
+Enhanced tab navigation with high-contrast styling for better visibility:
+
+**Tab Button Styling**:
+```cpp
+lv_obj_t *tab_btns = lv_tabview_get_tab_btns(tabview);
+
+// Larger font and spacing
+lv_obj_set_style_text_font(tab_btns, &lv_font_montserrat_26, 0);
+lv_obj_set_style_pad_column(tab_btns, 5, 0);  // 5px spacing between tabs
+
+// Selected tab: white on very dark blue (#001a33), rounded, no border
+lv_obj_set_style_text_color(tab_btns, lv_color_white(), LV_PART_ITEMS | LV_STATE_CHECKED);
+lv_obj_set_style_bg_color(tab_btns, lv_color_hex(0x001a33), LV_PART_ITEMS | LV_STATE_CHECKED);
+lv_obj_set_style_bg_opa(tab_btns, LV_OPA_COVER, LV_PART_ITEMS | LV_STATE_CHECKED);
+lv_obj_set_style_radius(tab_btns, 10, LV_PART_ITEMS | LV_STATE_CHECKED);
+lv_obj_set_style_border_width(tab_btns, 0, LV_PART_ITEMS | LV_STATE_CHECKED);
+
+// Unselected tabs: dark grey text with rounded border (top, left, right)
+lv_obj_set_style_text_color(tab_btns, lv_palette_darken(LV_PALETTE_GREY, 2), LV_PART_ITEMS);
+lv_obj_set_style_border_width(tab_btns, 2, LV_PART_ITEMS);
+lv_obj_set_style_border_color(tab_btns, lv_palette_main(LV_PALETTE_GREY), LV_PART_ITEMS);
+lv_obj_set_style_border_side(tab_btns, LV_BORDER_SIDE_TOP | LV_BORDER_SIDE_LEFT | LV_BORDER_SIDE_RIGHT, LV_PART_ITEMS);
+lv_obj_set_style_radius(tab_btns, 10, LV_PART_ITEMS);
+```
+
+**Visual Improvements**:
+- **High contrast**: White text on very dark blue (#001a33) for selected tab
+- **Rounded corners**: 10px radius for modern appearance
+- **Partial borders**: Top, left, right borders only on unselected tabs
+- **Better spacing**: 5px gaps between tabs prevent accidental touches
+- **Larger font**: Montserrat 26px for improved readability
+- **Tab overlap**: Content pulled up 15px to hide bottom rounded corners of tabs
 ```
 
 ### Tab Content
@@ -61,14 +103,19 @@ lv_obj_t *tab_about = lv_tabview_add_tab(tabview, "About");
 - Display: Touch LCD 7.0B, 1024x600
 - Software: LVGL 8.4.0, ESP32 Arduino 3.3.0
 
-### Custom Font
+### Custom Fonts
 
-**Montserrat 32px** enabled in `lv_conf.h`:
+**Montserrat 32px** for tab content titles, enabled in `lv_conf.h`:
 ```c
 #define LV_FONT_MONTSERRAT_32 1
 ```
 
-Font data compiled from `Montserrat-Medium.ttf` using LVGL font converter. Adds ~46KB to binary size.
+**Montserrat 26px** for tab button labels, enabled in `lv_conf.h`:
+```c
+#define LV_FONT_MONTSERRAT_26 1
+```
+
+Font data compiled from `Montserrat-Medium.ttf` using LVGL font converter. Combined adds ~80KB to binary size.
 
 ### Navigation
 - Touch tab buttons at top to switch screens

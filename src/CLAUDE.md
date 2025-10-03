@@ -55,12 +55,13 @@ make clean    # Remove build artifacts
 
 ### Babystep Progression
 
-Examples build on each other incrementally (38 total, all complete ✅):
+Examples build on each other incrementally (42 total, all complete ✅):
 
 1. **01-07**: Hardware foundation (LED, UART, RS485, I2C, LCD)
 2. **08-21**: LVGL core widgets (init, button, slider, chart, screens, text fields, checkbox, switch, list, bar, arc, meter, dashboard, table)
 3. **22-35**: LVGL extra widgets (dropdown, msgbox, spinner, image, calendar, LED, menu, canvas, colorwheel, animation, span, window, flex, grid)
 4. **36-38**: Advanced input widgets (button matrix calculator, spinbox, tileview)
+5. **39**: Screen rotation examples (0°, 90°, 180°, 270°)
 
 **Widget Coverage**: 103% - All LVGL 8.4 core and extra widgets covered!
 
@@ -86,6 +87,9 @@ Examples build on each other incrementally (38 total, all complete ✅):
 - Pixel clock: 30MHz
 - Framebuffer: PSRAM (1.2MB per buffer minimum)
 - Driver: ESP-IDF `esp_lcd_panel_rgb.h`
+- Rotation: Configurable (0°, 90°, 180°, 270°) via `lv_disp_set_rotation()`
+  - 0°/180°: Landscape mode (1024×600)
+  - 90°/270°: Portrait mode (600×1024)
 
 ### Code Reuse Pattern
 
@@ -232,6 +236,35 @@ Touch automatically integrated into LVGL via `lvgl_port_init()`.
 ```
 
 ## Code Patterns
+
+### Screen Rotation (39_lvgl_rotation_*)
+
+```cpp
+#include "lvgl_port.h"
+
+void setup() {
+    // Standard init sequence...
+    ESP_ERROR_CHECK(lvgl_port_init(panel_handle, tp_handle));
+
+    if (lvgl_port_lock(-1)) {
+        // Set rotation (LV_DISP_ROT_NONE, _90, _180, _270)
+        lv_disp_set_rotation(lv_disp_get_default(), LV_DISP_ROT_90);
+
+        // Create UI elements
+        // Note: Resolution changes based on rotation
+        // 0°/180°: 1024×600 (landscape)
+        // 90°/270°: 600×1024 (portrait)
+
+        lvgl_port_unlock();
+    }
+}
+```
+
+**Physical Orientation Reference**:
+- **0°**: USB port on right (default landscape)
+- **90°**: USB port on bottom (portrait)
+- **180°**: USB port on left (inverted landscape)
+- **270°**: USB port on top (inverted portrait)
 
 ### IO Extension (Backlight, Touch Reset, etc.)
 
