@@ -37,26 +37,62 @@ static lv_obj_t *label_temp_val = NULL;
 // Simulation variables
 static int speed_value = 0;
 static int temp_value = 20;
+static int target_speed = 0;
+static int target_temp = 20;
+
+// Animation callback for speed needle
+static void anim_speed_cb(void *var, int32_t value)
+{
+    lv_meter_set_indicator_value(meter_speed, indic_speed, value);
+    speed_value = value;
+}
+
+// Animation callback for temperature needle
+static void anim_temp_cb(void *var, int32_t value)
+{
+    lv_meter_set_indicator_value(meter_temp, indic_temp, value);
+    temp_value = value;
+}
 
 // Timer callback: Update meters with simulated data
 static void timer_cb(lv_timer_t *timer)
 {
     char buf[32];
 
-    // Speed: oscillate 0-200 km/h
-    speed_value = 110 + 90 * sin(millis() / 2000.0);
-    lv_meter_set_indicator_value(meter_speed, indic_speed, speed_value);
-    snprintf(buf, sizeof(buf), "%d km/h", speed_value);
+    // Speed: oscillate 0-200 km/h (slower oscillation for smaller jumps)
+    target_speed = 110 + 90 * sin(millis() / 5000.0);
+
+    // Animate speed needle smoothly
+    lv_anim_t anim_speed;
+    lv_anim_init(&anim_speed);
+    lv_anim_set_var(&anim_speed, indic_speed);
+    lv_anim_set_values(&anim_speed, speed_value, target_speed);
+    lv_anim_set_time(&anim_speed, 100);  // 100ms animation duration
+    lv_anim_set_exec_cb(&anim_speed, anim_speed_cb);
+    lv_anim_set_path_cb(&anim_speed, lv_anim_path_ease_in_out);
+    lv_anim_start(&anim_speed);
+
+    snprintf(buf, sizeof(buf), "%d km/h", target_speed);
     lv_label_set_text(label_speed_val, buf);
 
-    // Temperature: oscillate -10 to 110°C
-    temp_value = 50 + 50 * sin(millis() / 3000.0);
-    lv_meter_set_indicator_value(meter_temp, indic_temp, temp_value);
-    snprintf(buf, sizeof(buf), "%d°C", temp_value);
+    // Temperature: oscillate -10 to 110°C (slower oscillation for smaller jumps)
+    target_temp = 50 + 50 * sin(millis() / 15000.0);
+
+    // Animate temperature needle smoothly
+    lv_anim_t anim_temp;
+    lv_anim_init(&anim_temp);
+    lv_anim_set_var(&anim_temp, indic_temp);
+    lv_anim_set_values(&anim_temp, temp_value, target_temp);
+    lv_anim_set_time(&anim_temp, 100);  // 100ms animation duration
+    lv_anim_set_exec_cb(&anim_temp, anim_temp_cb);
+    lv_anim_set_path_cb(&anim_temp, lv_anim_path_ease_in_out);
+    lv_anim_start(&anim_temp);
+
+    snprintf(buf, sizeof(buf), "%d°C", target_temp);
     lv_label_set_text(label_temp_val, buf);
 
     // LED blinks when speed > 180 km/h (danger zone)
-    if (speed_value > 180) {
+    if (target_speed > 180) {
         digitalWrite(LED_GPIO_PIN, (millis() / 200) % 2);  // Fast blink
     } else {
         digitalWrite(LED_GPIO_PIN, LOW);
@@ -182,8 +218,8 @@ void setup()
         lv_label_set_text(info, "LED blinks when speed > 180 km/h (red zone)");
         lv_obj_align(info, LV_ALIGN_BOTTOM_MID, 0, -10);
 
-        // Create timer to update meters (250ms interval)
-        lv_timer_create(timer_cb, 250, NULL);
+        // Create timer to update meters (50ms interval for smoother animation)
+        lv_timer_create(timer_cb, 50, NULL);
 
         lvgl_port_unlock();
     }
