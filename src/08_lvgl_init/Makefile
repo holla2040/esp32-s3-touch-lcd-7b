@@ -3,8 +3,8 @@ IP=10.12.154.169
 BIN := $(wildcard /tmp/arduino-build/*.ino.bin)
 
 bin:
-	# arduino-cli compile --build-path /tmp/arduino-build -b esp32:esp32:esp32s3:CDCOnBoot=cdc,PSRAM=opi,PartitionScheme=huge_app .
-	arduino-cli compile --build-path /tmp/arduino-build -b esp32:esp32:esp32s3:PSRAM=opi,PartitionScheme=huge_app .
+	# arduino-cli compile --build-path /tmp/arduino-build -b esp32:esp32:esp32s3:CDCOnBoot=cdc,PSRAM=opi,PartitionScheme=app3M_fat9M_16MB .
+	arduino-cli compile --build-path /tmp/arduino-build -b esp32:esp32:esp32s3:FlashSize=16M,PSRAM=opi,PartitionScheme=app3M_fat9M_16MB .
 
 flash:
 	make serial
