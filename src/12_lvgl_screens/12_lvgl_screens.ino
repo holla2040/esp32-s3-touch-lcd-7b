@@ -113,13 +113,26 @@ void setup() {
 
     // Create UI while LVGL task is waiting
     if (lvgl_port_lock(0)) {
-        // Create tab view
-        lv_obj_t *tabview = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 60);
+        // Create tab view with larger tab button area
+        lv_obj_t *tabview = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 80);
 
         // Add three tabs
         lv_obj_t *tab_dashboard = lv_tabview_add_tab(tabview, "Dashboard");
         lv_obj_t *tab_settings = lv_tabview_add_tab(tabview, "Settings");
         lv_obj_t *tab_about = lv_tabview_add_tab(tabview, "About");
+
+        // Make tab labels larger and add high contrast styling for selected tab
+        lv_obj_t *tab_btns = lv_tabview_get_tab_btns(tabview);
+        lv_obj_set_style_text_font(tab_btns, &lv_font_montserrat_26, 0);
+
+        // Selected tab: white text on very dark blue background
+        lv_obj_set_style_text_font(tab_btns, &lv_font_montserrat_26, LV_PART_ITEMS | LV_STATE_CHECKED);
+        lv_obj_set_style_text_color(tab_btns, lv_color_white(), LV_PART_ITEMS | LV_STATE_CHECKED);
+        lv_obj_set_style_bg_color(tab_btns, lv_palette_darken(LV_PALETTE_BLUE, 4), LV_PART_ITEMS | LV_STATE_CHECKED);
+        lv_obj_set_style_bg_opa(tab_btns, LV_OPA_COVER, LV_PART_ITEMS | LV_STATE_CHECKED);
+
+        // Unselected tabs: darker grey text
+        lv_obj_set_style_text_color(tab_btns, lv_palette_darken(LV_PALETTE_GREY, 2), LV_PART_ITEMS);
 
         // Populate each tab
         create_dashboard_tab(tab_dashboard);
