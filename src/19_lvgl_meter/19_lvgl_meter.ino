@@ -134,9 +134,9 @@ void setup()
         lv_obj_set_size(meter_speed, 380, 380);
         lv_obj_align(meter_speed, LV_ALIGN_LEFT_MID, 30, 20);
 
-        // Add scale to speedometer (0-220 km/h, arc from 135° to 45° = 270° total)
+        // Add scale to speedometer (0-220 km/h, arc from 135° to 315° = 180° total)
         lv_meter_scale_t *scale_speed = lv_meter_add_scale(meter_speed);
-        lv_meter_set_scale_range(meter_speed, scale_speed, 0, 220, 270, 135);
+        lv_meter_set_scale_range(meter_speed, scale_speed, 0, 220, 180, 135);
 
         // Add major ticks (every 20 km/h)
         lv_meter_set_scale_ticks(meter_speed, scale_speed, 12, 3, 15, lv_palette_main(LV_PALETTE_GREY));
@@ -163,10 +163,12 @@ void setup()
         // Add needle to speedometer
         indic_speed = lv_meter_add_needle_line(meter_speed, scale_speed, 5, lv_palette_main(LV_PALETTE_GREY), -15);
 
-        // Center value label for speedometer
+        // Center value label for speedometer (right-aligned to prevent jumping)
         label_speed_val = lv_label_create(meter_speed);
         lv_label_set_text(label_speed_val, "0 km/h");
         lv_obj_set_style_text_font(label_speed_val, &lv_font_montserrat_32, 0);
+        lv_obj_set_style_text_align(label_speed_val, LV_TEXT_ALIGN_RIGHT, 0);
+        lv_obj_set_width(label_speed_val, 150);  // Fixed width to anchor right edge
         lv_obj_align(label_speed_val, LV_ALIGN_CENTER, 0, 80);
 
         // Meter 2: Temperature Gauge (right side) - STYLED DIFFERENTLY
@@ -215,10 +217,12 @@ void setup()
         // Purple needle, thicker
         indic_temp = lv_meter_add_needle_line(meter_temp, scale_temp, 7, lv_palette_main(LV_PALETTE_PURPLE), -15);
 
-        // Center value label for temperature - larger font
+        // Center value label for temperature - larger font (right-aligned to prevent jumping)
         label_temp_val = lv_label_create(meter_temp);
         lv_label_set_text(label_temp_val, "20°C");
         lv_obj_set_style_text_font(label_temp_val, &lv_font_montserrat_44, 0);
+        lv_obj_set_style_text_align(label_temp_val, LV_TEXT_ALIGN_RIGHT, 0);
+        lv_obj_set_width(label_temp_val, 150);  // Fixed width to anchor right edge
         lv_obj_align(label_temp_val, LV_ALIGN_CENTER, 0, 80);
 
         // Info text
