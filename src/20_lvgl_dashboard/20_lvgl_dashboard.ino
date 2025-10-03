@@ -84,11 +84,11 @@ static void timer_cb(lv_timer_t *timer)
 
     // Battery arc color-coding
     if (battery > 50) {
-        lv_obj_set_style_arc_color(arc_battery, lv_palette_main(LV_PALETTE_GREEN), LV_PART_INDICATOR);
+        lv_obj_set_style_arc_color(arc_battery, lv_color_hex(0x00cc44), LV_PART_INDICATOR);
     } else if (battery > 20) {
-        lv_obj_set_style_arc_color(arc_battery, lv_palette_main(LV_PALETTE_ORANGE), LV_PART_INDICATOR);
+        lv_obj_set_style_arc_color(arc_battery, lv_color_hex(0xff8800), LV_PART_INDICATOR);
     } else {
-        lv_obj_set_style_arc_color(arc_battery, lv_palette_main(LV_PALETTE_RED), LV_PART_INDICATOR);
+        lv_obj_set_style_arc_color(arc_battery, lv_color_hex(0xff4444), LV_PART_INDICATOR);
     }
 
     // Fuel: slowly decrease
@@ -128,52 +128,101 @@ void setup()
 
     if (lvgl_port_lock(0)) {
 
+        // Apply dark theme to screen
+        lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(0x1a1a1a), 0);
+
         // Title
         lv_obj_t *title = lv_label_create(lv_scr_act());
         lv_label_set_text(title, "Vehicle Dashboard");
         lv_obj_set_style_text_font(title, &lv_font_montserrat_32, 0);
+        lv_obj_set_style_text_color(title, lv_color_hex(0xffffff), 0);
         lv_obj_align(title, LV_ALIGN_TOP_MID, 0, 5);
 
         // TOP ROW: Speed Meter (left) and RPM Meter (right)
         meter_speed = lv_meter_create(lv_scr_act());
         lv_obj_set_size(meter_speed, 240, 240);
         lv_obj_align(meter_speed, LV_ALIGN_TOP_LEFT, 20, 50);
+        lv_obj_set_style_bg_color(meter_speed, lv_color_hex(0x2a2a2a), 0);
+        lv_obj_set_style_border_color(meter_speed, lv_color_hex(0x404040), 0);
 
         lv_meter_scale_t *scale_speed = lv_meter_add_scale(meter_speed);
         lv_meter_set_scale_range(meter_speed, scale_speed, 0, 200, 270, 135);
-        lv_meter_set_scale_ticks(meter_speed, scale_speed, 11, 2, 10, lv_palette_main(LV_PALETTE_GREY));
-        needle_speed = lv_meter_add_needle_line(meter_speed, scale_speed, 4, lv_palette_main(LV_PALETTE_BLUE), -10);
+        lv_meter_set_scale_ticks(meter_speed, scale_speed, 11, 2, 10, lv_color_hex(0x606060));
+
+        // Color bands: 0-60 green, 60-120 yellow, 120-180 orange, 180-200 red
+        lv_meter_indicator_t *arc_speed_green = lv_meter_add_arc(meter_speed, scale_speed, 20, lv_color_hex(0x00cc44), 0);
+        lv_meter_set_indicator_start_value(meter_speed, arc_speed_green, 0);
+        lv_meter_set_indicator_end_value(meter_speed, arc_speed_green, 60);
+
+        lv_meter_indicator_t *arc_speed_yellow = lv_meter_add_arc(meter_speed, scale_speed, 20, lv_color_hex(0xcccc00), 0);
+        lv_meter_set_indicator_start_value(meter_speed, arc_speed_yellow, 60);
+        lv_meter_set_indicator_end_value(meter_speed, arc_speed_yellow, 120);
+
+        lv_meter_indicator_t *arc_speed_orange = lv_meter_add_arc(meter_speed, scale_speed, 20, lv_color_hex(0xff8800), 0);
+        lv_meter_set_indicator_start_value(meter_speed, arc_speed_orange, 120);
+        lv_meter_set_indicator_end_value(meter_speed, arc_speed_orange, 180);
+
+        lv_meter_indicator_t *arc_speed_red = lv_meter_add_arc(meter_speed, scale_speed, 20, lv_color_hex(0xff4444), 0);
+        lv_meter_set_indicator_start_value(meter_speed, arc_speed_red, 180);
+        lv_meter_set_indicator_end_value(meter_speed, arc_speed_red, 200);
+
+        needle_speed = lv_meter_add_needle_line(meter_speed, scale_speed, 4, lv_color_hex(0xffffff), -10);
 
         label_speed = lv_label_create(meter_speed);
         lv_label_set_text(label_speed, "0");
         lv_obj_set_style_text_font(label_speed, &lv_font_montserrat_32, 0);
+        lv_obj_set_style_text_color(label_speed, lv_color_hex(0xffffff), 0);
         lv_obj_align(label_speed, LV_ALIGN_CENTER, 0, 40);
 
         lv_obj_t *lbl_speed_unit = lv_label_create(meter_speed);
         lv_label_set_text(lbl_speed_unit, "km/h");
+        lv_obj_set_style_text_color(lbl_speed_unit, lv_color_hex(0xaaaaaa), 0);
         lv_obj_align(lbl_speed_unit, LV_ALIGN_CENTER, 0, 65);
 
         meter_rpm = lv_meter_create(lv_scr_act());
         lv_obj_set_size(meter_rpm, 240, 240);
         lv_obj_align(meter_rpm, LV_ALIGN_TOP_RIGHT, -20, 50);
+        lv_obj_set_style_bg_color(meter_rpm, lv_color_hex(0x2a2a2a), 0);
+        lv_obj_set_style_border_color(meter_rpm, lv_color_hex(0x404040), 0);
 
         lv_meter_scale_t *scale_rpm = lv_meter_add_scale(meter_rpm);
         lv_meter_set_scale_range(meter_rpm, scale_rpm, 0, 8000, 270, 135);
-        lv_meter_set_scale_ticks(meter_rpm, scale_rpm, 9, 2, 10, lv_palette_main(LV_PALETTE_GREY));
-        needle_rpm = lv_meter_add_needle_line(meter_rpm, scale_rpm, 4, lv_palette_main(LV_PALETTE_RED), -10);
+        lv_meter_set_scale_ticks(meter_rpm, scale_rpm, 9, 2, 10, lv_color_hex(0x606060));
+
+        // Color bands: 0-4000 green, 4000-6000 yellow, 6000-7000 orange, 7000-8000 red
+        lv_meter_indicator_t *arc_rpm_green = lv_meter_add_arc(meter_rpm, scale_rpm, 20, lv_color_hex(0x00cc44), 0);
+        lv_meter_set_indicator_start_value(meter_rpm, arc_rpm_green, 0);
+        lv_meter_set_indicator_end_value(meter_rpm, arc_rpm_green, 4000);
+
+        lv_meter_indicator_t *arc_rpm_yellow = lv_meter_add_arc(meter_rpm, scale_rpm, 20, lv_color_hex(0xcccc00), 0);
+        lv_meter_set_indicator_start_value(meter_rpm, arc_rpm_yellow, 4000);
+        lv_meter_set_indicator_end_value(meter_rpm, arc_rpm_yellow, 6000);
+
+        lv_meter_indicator_t *arc_rpm_orange = lv_meter_add_arc(meter_rpm, scale_rpm, 20, lv_color_hex(0xff8800), 0);
+        lv_meter_set_indicator_start_value(meter_rpm, arc_rpm_orange, 6000);
+        lv_meter_set_indicator_end_value(meter_rpm, arc_rpm_orange, 7000);
+
+        lv_meter_indicator_t *arc_rpm_red = lv_meter_add_arc(meter_rpm, scale_rpm, 20, lv_color_hex(0xff4444), 0);
+        lv_meter_set_indicator_start_value(meter_rpm, arc_rpm_red, 7000);
+        lv_meter_set_indicator_end_value(meter_rpm, arc_rpm_red, 8000);
+
+        needle_rpm = lv_meter_add_needle_line(meter_rpm, scale_rpm, 4, lv_color_hex(0xffffff), -10);
 
         label_rpm = lv_label_create(meter_rpm);
         lv_label_set_text(label_rpm, "0");
         lv_obj_set_style_text_font(label_rpm, &lv_font_montserrat_32, 0);
+        lv_obj_set_style_text_color(label_rpm, lv_color_hex(0xffffff), 0);
         lv_obj_align(label_rpm, LV_ALIGN_CENTER, 0, 40);
 
         lv_obj_t *lbl_rpm_unit = lv_label_create(meter_rpm);
         lv_label_set_text(lbl_rpm_unit, "RPM");
+        lv_obj_set_style_text_color(lbl_rpm_unit, lv_color_hex(0xaaaaaa), 0);
         lv_obj_align(lbl_rpm_unit, LV_ALIGN_CENTER, 0, 65);
 
         // MIDDLE ROW: Temperature Arc and Battery Arc
         lv_obj_t *lbl_temp_title = lv_label_create(lv_scr_act());
         lv_label_set_text(lbl_temp_title, "Temp");
+        lv_obj_set_style_text_color(lbl_temp_title, lv_color_hex(0xffffff), 0);
         lv_obj_align(lbl_temp_title, LV_ALIGN_TOP_LEFT, 310, 55);
 
         arc_temp = lv_arc_create(lv_scr_act());
@@ -183,14 +232,19 @@ void setup()
         lv_arc_set_value(arc_temp, 70);
         lv_arc_set_bg_angles(arc_temp, 0, 270);
         lv_obj_clear_flag(arc_temp, LV_OBJ_FLAG_CLICKABLE);
-        lv_obj_set_style_arc_color(arc_temp, lv_palette_main(LV_PALETTE_ORANGE), LV_PART_INDICATOR);
+        lv_obj_set_style_bg_color(arc_temp, lv_color_hex(0x2a2a2a), 0);
+        lv_obj_set_style_border_color(arc_temp, lv_color_hex(0x404040), 0);
+        lv_obj_set_style_arc_color(arc_temp, lv_color_hex(0x404040), LV_PART_MAIN);
+        lv_obj_set_style_arc_color(arc_temp, lv_color_hex(0xff8800), LV_PART_INDICATOR);
 
         label_temp = lv_label_create(arc_temp);
         lv_label_set_text(label_temp, "70°C");
+        lv_obj_set_style_text_color(label_temp, lv_color_hex(0xffffff), 0);
         lv_obj_center(label_temp);
 
         lv_obj_t *lbl_batt_title = lv_label_create(lv_scr_act());
         lv_label_set_text(lbl_batt_title, "Battery");
+        lv_obj_set_style_text_color(lbl_batt_title, lv_color_hex(0xffffff), 0);
         lv_obj_align(lbl_batt_title, LV_ALIGN_TOP_LEFT, 585, 55);
 
         arc_battery = lv_arc_create(lv_scr_act());
@@ -200,15 +254,20 @@ void setup()
         lv_arc_set_value(arc_battery, 95);
         lv_arc_set_bg_angles(arc_battery, 0, 270);
         lv_obj_clear_flag(arc_battery, LV_OBJ_FLAG_CLICKABLE);
-        lv_obj_set_style_arc_color(arc_battery, lv_palette_main(LV_PALETTE_GREEN), LV_PART_INDICATOR);
+        lv_obj_set_style_bg_color(arc_battery, lv_color_hex(0x2a2a2a), 0);
+        lv_obj_set_style_border_color(arc_battery, lv_color_hex(0x404040), 0);
+        lv_obj_set_style_arc_color(arc_battery, lv_color_hex(0x404040), LV_PART_MAIN);
+        lv_obj_set_style_arc_color(arc_battery, lv_color_hex(0x00cc44), LV_PART_INDICATOR);
 
         label_battery = lv_label_create(arc_battery);
         lv_label_set_text(label_battery, "95%");
+        lv_obj_set_style_text_color(label_battery, lv_color_hex(0xffffff), 0);
         lv_obj_center(label_battery);
 
         // Fuel and Oil bars
         lv_obj_t *lbl_fuel = lv_label_create(lv_scr_act());
         lv_label_set_text(lbl_fuel, "Fuel:");
+        lv_obj_set_style_text_color(lbl_fuel, lv_color_hex(0xffffff), 0);
         lv_obj_align(lbl_fuel, LV_ALIGN_TOP_LEFT, 280, 230);
 
         bar_fuel = lv_bar_create(lv_scr_act());
@@ -216,14 +275,17 @@ void setup()
         lv_obj_align(bar_fuel, LV_ALIGN_TOP_LEFT, 280, 255);
         lv_bar_set_range(bar_fuel, 0, 100);
         lv_bar_set_value(bar_fuel, 75, LV_ANIM_OFF);
-        lv_obj_set_style_bg_color(bar_fuel, lv_palette_main(LV_PALETTE_CYAN), LV_PART_INDICATOR);
+        lv_obj_set_style_bg_color(bar_fuel, lv_color_hex(0x404040), LV_PART_MAIN);
+        lv_obj_set_style_bg_color(bar_fuel, lv_color_hex(0x00cccc), LV_PART_INDICATOR);
 
         label_fuel = lv_label_create(lv_scr_act());
         lv_label_set_text(label_fuel, "75%");
+        lv_obj_set_style_text_color(label_fuel, lv_color_hex(0xffffff), 0);
         lv_obj_align(label_fuel, LV_ALIGN_TOP_LEFT, 470, 230);
 
         lv_obj_t *lbl_oil = lv_label_create(lv_scr_act());
         lv_label_set_text(lbl_oil, "Oil:");
+        lv_obj_set_style_text_color(lbl_oil, lv_color_hex(0xffffff), 0);
         lv_obj_align(lbl_oil, LV_ALIGN_TOP_LEFT, 520, 230);
 
         bar_oil = lv_bar_create(lv_scr_act());
@@ -231,15 +293,18 @@ void setup()
         lv_obj_align(bar_oil, LV_ALIGN_TOP_LEFT, 520, 255);
         lv_bar_set_range(bar_oil, 0, 100);
         lv_bar_set_value(bar_oil, 60, LV_ANIM_OFF);
-        lv_obj_set_style_bg_color(bar_oil, lv_palette_main(LV_PALETTE_AMBER), LV_PART_INDICATOR);
+        lv_obj_set_style_bg_color(bar_oil, lv_color_hex(0x404040), LV_PART_MAIN);
+        lv_obj_set_style_bg_color(bar_oil, lv_color_hex(0xffaa00), LV_PART_INDICATOR);
 
         label_oil = lv_label_create(lv_scr_act());
         lv_label_set_text(label_oil, "60 PSI");
+        lv_obj_set_style_text_color(label_oil, lv_color_hex(0xffffff), 0);
         lv_obj_align(label_oil, LV_ALIGN_TOP_LEFT, 710, 230);
 
         // BOTTOM: Power Chart
         lv_obj_t *lbl_chart = lv_label_create(lv_scr_act());
         lv_label_set_text(lbl_chart, "Power Output");
+        lv_obj_set_style_text_color(lbl_chart, lv_color_hex(0xffffff), 0);
         lv_obj_align(lbl_chart, LV_ALIGN_BOTTOM_LEFT, 30, -245);
 
         chart = lv_chart_create(lv_scr_act());
@@ -249,8 +314,10 @@ void setup()
         lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, 0, 100);
         lv_chart_set_point_count(chart, 50);
         lv_chart_set_update_mode(chart, LV_CHART_UPDATE_MODE_SHIFT);
+        lv_obj_set_style_bg_color(chart, lv_color_hex(0x2a2a2a), 0);
+        lv_obj_set_style_border_color(chart, lv_color_hex(0x404040), 0);
 
-        chart_series = lv_chart_add_series(chart, lv_palette_main(LV_PALETTE_GREEN), LV_CHART_AXIS_PRIMARY_Y);
+        chart_series = lv_chart_add_series(chart, lv_color_hex(0x00ff66), LV_CHART_AXIS_PRIMARY_Y);
 
         // Initialize chart with zeroes
         for (int i = 0; i < 50; i++) {
