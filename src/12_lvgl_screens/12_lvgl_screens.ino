@@ -116,6 +116,9 @@ void setup() {
         // Create tab view with larger tab button area
         lv_obj_t *tabview = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 80);
 
+        // Add 5px padding from screen edges
+        lv_obj_set_style_pad_all(tabview, 5, 0);
+
         // Add three tabs
         lv_obj_t *tab_dashboard = lv_tabview_add_tab(tabview, "Dashboard");
         lv_obj_t *tab_settings = lv_tabview_add_tab(tabview, "Settings");
@@ -124,6 +127,7 @@ void setup() {
         // Make tab labels larger and add high contrast styling for selected tab
         lv_obj_t *tab_btns = lv_tabview_get_tab_btns(tabview);
         lv_obj_set_style_text_font(tab_btns, &lv_font_montserrat_26, 0);
+        lv_obj_set_style_pad_column(tab_btns, 5, 0);  // 5px spacing between tabs
 
         // Selected tab: white text on very dark blue background
         lv_obj_set_style_text_font(tab_btns, &lv_font_montserrat_26, LV_PART_ITEMS | LV_STATE_CHECKED);
@@ -131,8 +135,12 @@ void setup() {
         lv_obj_set_style_bg_color(tab_btns, lv_palette_darken(LV_PALETTE_BLUE, 4), LV_PART_ITEMS | LV_STATE_CHECKED);
         lv_obj_set_style_bg_opa(tab_btns, LV_OPA_COVER, LV_PART_ITEMS | LV_STATE_CHECKED);
 
-        // Unselected tabs: darker grey text
+        // Unselected tabs: darker grey text with rounded border (top, left, right)
         lv_obj_set_style_text_color(tab_btns, lv_palette_darken(LV_PALETTE_GREY, 2), LV_PART_ITEMS);
+        lv_obj_set_style_border_width(tab_btns, 2, LV_PART_ITEMS);
+        lv_obj_set_style_border_color(tab_btns, lv_palette_main(LV_PALETTE_GREY), LV_PART_ITEMS);
+        lv_obj_set_style_border_side(tab_btns, LV_BORDER_SIDE_TOP | LV_BORDER_SIDE_LEFT | LV_BORDER_SIDE_RIGHT, LV_PART_ITEMS);
+        lv_obj_set_style_radius(tab_btns, 10, LV_PART_ITEMS);
 
         // Populate each tab
         create_dashboard_tab(tab_dashboard);
