@@ -169,48 +169,56 @@ void setup()
         lv_obj_set_style_text_font(label_speed_val, &lv_font_montserrat_32, 0);
         lv_obj_align(label_speed_val, LV_ALIGN_CENTER, 0, 80);
 
-        // Meter 2: Temperature Gauge (right side)
+        // Meter 2: Temperature Gauge (right side) - STYLED DIFFERENTLY
         lv_obj_t *label_temp = lv_label_create(lv_scr_act());
         lv_label_set_text(label_temp, "Temperature");
         lv_obj_align(label_temp, LV_ALIGN_TOP_RIGHT, -150, 70);
 
         meter_temp = lv_meter_create(lv_scr_act());
-        lv_obj_set_size(meter_temp, 380, 380);
+        lv_obj_set_size(meter_temp, 418, 418);  // 10% larger (380 * 1.1 = 418)
         lv_obj_align(meter_temp, LV_ALIGN_RIGHT_MID, -30, 20);
+
+        // Add cyan border and light blue background
+        lv_obj_set_style_border_width(meter_temp, 4, 0);
+        lv_obj_set_style_border_color(meter_temp, lv_palette_main(LV_PALETTE_CYAN), 0);
+        lv_obj_set_style_bg_color(meter_temp, lv_palette_lighten(LV_PALETTE_BLUE, 4), 0);
 
         // Add scale to temperature gauge (-20 to 120°C, arc from 135° to 45°)
         lv_meter_scale_t *scale_temp = lv_meter_add_scale(meter_temp);
         lv_meter_set_scale_range(meter_temp, scale_temp, -20, 120, 270, 135);
 
-        // Add major ticks (every 20°C)
-        lv_meter_set_scale_ticks(meter_temp, scale_temp, 8, 3, 15, lv_palette_main(LV_PALETTE_GREY));
+        // Set larger font for tick labels (26pt, closest available to 24pt)
+        lv_obj_set_style_text_font(meter_temp, &lv_font_montserrat_26, LV_PART_TICKS);
 
-        // Add minor ticks (every 10°C)
-        lv_meter_set_scale_major_ticks(meter_temp, scale_temp, 2, 2, 10, lv_color_black(), 15);
+        // Purple ticks instead of grey (different styling)
+        lv_meter_set_scale_ticks(meter_temp, scale_temp, 8, 4, 18, lv_palette_main(LV_PALETTE_PURPLE));
 
-        // Add color zones for temperature
+        // Add minor ticks (every 10°C) with larger labels
+        lv_meter_set_scale_major_ticks(meter_temp, scale_temp, 2, 2, 10, lv_palette_main(LV_PALETTE_DEEP_PURPLE), 24);
+
+        // Add color zones for temperature - thicker arcs
         // Blue zone: -20 to 0°C (cold)
-        lv_meter_indicator_t *indic_blue = lv_meter_add_arc(meter_temp, scale_temp, 10, lv_palette_main(LV_PALETTE_BLUE), 0);
+        lv_meter_indicator_t *indic_blue = lv_meter_add_arc(meter_temp, scale_temp, 15, lv_palette_main(LV_PALETTE_BLUE), 0);
         lv_meter_set_indicator_start_value(meter_temp, indic_blue, -20);
         lv_meter_set_indicator_end_value(meter_temp, indic_blue, 0);
 
         // Green zone: 0-80°C (normal)
-        lv_meter_indicator_t *indic_temp_green = lv_meter_add_arc(meter_temp, scale_temp, 10, lv_palette_main(LV_PALETTE_GREEN), 0);
+        lv_meter_indicator_t *indic_temp_green = lv_meter_add_arc(meter_temp, scale_temp, 15, lv_palette_main(LV_PALETTE_GREEN), 0);
         lv_meter_set_indicator_start_value(meter_temp, indic_temp_green, 0);
         lv_meter_set_indicator_end_value(meter_temp, indic_temp_green, 80);
 
         // Orange/Red zone: 80-120°C (hot)
-        lv_meter_indicator_t *indic_orange = lv_meter_add_arc(meter_temp, scale_temp, 10, lv_palette_main(LV_PALETTE_DEEP_ORANGE), 0);
+        lv_meter_indicator_t *indic_orange = lv_meter_add_arc(meter_temp, scale_temp, 15, lv_palette_main(LV_PALETTE_DEEP_ORANGE), 0);
         lv_meter_set_indicator_start_value(meter_temp, indic_orange, 80);
         lv_meter_set_indicator_end_value(meter_temp, indic_orange, 120);
 
-        // Add needle to temperature gauge
-        indic_temp = lv_meter_add_needle_line(meter_temp, scale_temp, 5, lv_palette_main(LV_PALETTE_RED), -15);
+        // Purple needle, thicker
+        indic_temp = lv_meter_add_needle_line(meter_temp, scale_temp, 7, lv_palette_main(LV_PALETTE_PURPLE), -15);
 
-        // Center value label for temperature
+        // Center value label for temperature - larger font
         label_temp_val = lv_label_create(meter_temp);
         lv_label_set_text(label_temp_val, "20°C");
-        lv_obj_set_style_text_font(label_temp_val, &lv_font_montserrat_32, 0);
+        lv_obj_set_style_text_font(label_temp_val, &lv_font_montserrat_44, 0);
         lv_obj_align(label_temp_val, LV_ALIGN_CENTER, 0, 80);
 
         // Info text
